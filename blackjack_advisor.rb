@@ -1,3 +1,16 @@
+def get_user_hand
+  print 'Enter your two cards: '
+  until is_valid_hand?(hand = gets.chomp, 2); end
+  #This seems kinda weird, but I don't actully need the loop to do anything except pass
+  hand
+end
+
+def get_dealer_card
+  print "Enter the dealer's card: "
+  until is_valid_hand?(dealer_card = gets.chomp, 1); end
+  dealer_card
+end
+
 def is_valid_hand?(cards, expected)
   if are_cards?(cards)
     count = count_cards(cards)
@@ -5,29 +18,6 @@ def is_valid_hand?(cards, expected)
   end
 
   count == expected
-end
-
-def clean_input(cards)
-  i = 0
-  formatted_hand = []
-
-  until cards[i] == nil
-    if cards[i].upcase =~ /[AKQJ2-9]/
-      add_card(cards[i], formatted_hand)
-
-    elsif cards[i] == '1' and cards[i + 1] == '0'
-      add_card('10', formatted_hand)
-
-    end
-
-    i += 1
-  end
-
-  formatted_hand
-end
-
-def add_card(card, hand)
-  hand << card
 end
 
 def are_cards?(cards)
@@ -56,39 +46,27 @@ def count_cards(cards)
   count
 end
 
-def singular_or_plural(quantity, noun)
-  if quantity == 1
-    noun
-  else
+def clean_input(cards)
+  i = 0
+  formatted_hand = []
 
-    case noun[-2] + noun[-1]
-    when /ch/, /sh/, /.s/, /.x/, /.z/
-      noun + 'es'
-    when /[aeiou]y/
-      noun + 's'
-    when /.y/
-      noun[0..-2] + 'ies'
-    when /.f/
-      noun[0..-2] + 'ves'
-    when /fe/
-      noun[0..-3] + 'ves'
-    else
-      noun + 's'
+  until cards[i] == nil
+    if cards[i].upcase =~ /[AKQJ2-9]/
+      add_card(cards[i], formatted_hand)
+
+    elsif cards[i] == '1' and cards[i + 1] == '0'
+      add_card('10', formatted_hand)
+
     end
+
+    i += 1
   end
+
+  formatted_hand
 end
 
-def get_user_hand
-  print 'Enter your two cards: '
-  until is_valid_hand?(hand = gets.chomp, 2); end
-  #This seems kinda weird, but I don't actully need the loop to do anything except pass
-  hand
-end
-
-def get_dealer_card
-  print "Enter the dealer's card: "
-  until is_valid_hand?(dealer_card = gets.chomp, 1); end
-  dealer_card
+def add_card(card, hand)
+  hand << card
 end
 
 def find_hand_type(hand)
@@ -105,21 +83,24 @@ def find_hand_type(hand)
 end
 
 def find_value(hand)
+  hand_value = 0
   hand.each do |card|
     if card.upcase =~ /KQJ/
-      card = '10'
+      hand_value += 10
 
     elsif card.upcase == 'A'
-      card = '11'
-
+      hand_value += 11
+    else
+      hand_value += card.to_i
     end
   end
 
-  if hand.size == 2
-    hand[0] + hand[1]
-  else
-    hand[0]
-  end
+  hand_value
+  # if hand.size == 2
+  #   hand[0].to_i + hand[1].to_i
+  # else
+  #   hand[0].to_1
+  # end
 
 end
 
@@ -142,7 +123,7 @@ def get_suggestion(hand_type, hand_value, dealer_card)
 
   case hand_type
   when 'hard_hand'
-    hard_hand{hand_value{dealer_card}}
+    hard_hand[hand_value][dealer_card]
 
   when 'soft_hand'
     soft_hand{hand_value{dealer_card}}
@@ -153,11 +134,33 @@ def get_suggestion(hand_type, hand_value, dealer_card)
   end
 end
 
+def singular_or_plural(quantity, noun)
+  if quantity == 1
+    noun
+  else
+
+    case noun[-2] + noun[-1]
+    when /ch/, /sh/, /.s/, /.x/, /.z/
+      noun + 'es'
+    when /[aeiou]y/
+      noun + 's'
+    when /.y/
+      noun[0..-2] + 'ies'
+    when /.f/
+      noun[0..-2] + 'ves'
+    when /fe/
+      noun[0..-3] + 'ves'
+    else
+      noun + 's'
+    end
+  end
+end
+
 hand = get_user_hand
 dealer_card = get_dealer_card
 
 hand = clean_input(hand)
-dealer_card = clean_input(dealer_card)
+dealer_card = find_value(clean_input(dealer_card))
 hand_type = find_hand_type(hand)
 hand_value = find_value(hand)
 
