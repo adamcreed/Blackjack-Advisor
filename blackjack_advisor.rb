@@ -52,7 +52,7 @@ def clean_input(cards)
 
   until cards[i] == nil
     if cards[i].upcase =~ /[AKQJ2-9]/
-      add_card(cards[i], formatted_hand)
+      add_card(cards[i].upcase, formatted_hand)
 
     elsif cards[i] == '1' and cards[i + 1] == '0'
       add_card('10', formatted_hand)
@@ -71,13 +71,13 @@ end
 
 def find_hand_type(hand)
   if hand[0] == hand[1]
-    'a_pair'
+    'pair'
 
   elsif hand.include?('A')
-    'soft_hand'
+    'soft hand'
 
   else
-    'hard_hand'
+    'hard hand'
 
   end
 end
@@ -85,10 +85,10 @@ end
 def find_value(hand)
   hand_value = 0
   hand.each do |card|
-    if card.upcase =~ /KQJ/
+    if card =~ /[KQJ]/
       hand_value += 10
 
-    elsif card.upcase == 'A'
+    elsif card == 'A'
       hand_value += 11
     else
       hand_value += card.to_i
@@ -96,41 +96,189 @@ def find_value(hand)
   end
 
   hand_value
-  # if hand.size == 2
-  #   hand[0].to_i + hand[1].to_i
-  # else
-  #   hand[0].to_1
-  # end
-
 end
 
 def get_suggestion(hand_type, hand_value, dealer_card)
-  hard_hand = { 5 => {2 => 'Hit', 3 => 'Hit', 4 => 'Hit', 5 => 'Hit',
-                      6 => 'Hit', 7 => 'Hit', 8 => 'Hit', 9 => 'Hit',
-                      10 => 'Hit', 'A' => 'Hit'},
-                6 => {2 => 'Hit', 3 => 'Hit', 4 => 'Hit', 5 => 'Hit',
-                      6 => 'Hit', 7 => 'Hit', 8 => 'Hit', 9 => 'Hit',
-                      10 => 'Hit', 'A' => 'Hit'},
-                7 => {2 => 'Hit', 3 => 'Hit', 4 => 'Hit', 5 => 'Hit',
-                       6 => 'Hit', 7 => 'Hit', 8 => 'Hit', 9 => 'Hit',
-                       10 => 'Hit', 'A' => 'Hit'},
-                8 => {2 => 'Hit', 3 => 'Hit', 4 => 'Hit',
-                      5 => 'Double if possible, otherwise Hit',
-                      6 => 'Double if possible, otherwise Hit', 7 => 'Hit',
-                      8 => 'Hit', 9 => 'Hit', 10 => 'Hit', 'A' => 'Hit'}}
-  soft_hand = {}
-  a_pair = {}
-
   case hand_type
-  when 'hard_hand'
-    hard_hand[hand_value][dealer_card]
+  when 'hard hand'
+    convert_advice_code(get_hard_hand_code(hand_value, dealer_card))
 
-  when 'soft_hand'
-    soft_hand{hand_value{dealer_card}}
+  when 'soft hand'
+    convert_advice_code(get_soft_hand_code(hand_value, dealer_card))
 
   when 'pair'
-    a_pair{hand_value{dealer_card}}
+    convert_advice_code(get_pair_code(hand_value, dealer_card))
+  end
+end
 
+def get_hard_hand_code(hand_value, dealer_card)
+  hard_hand = { 5 => {2 => 'H', 3 => 'H', 4 => 'H', 5 => 'H',
+                      6 => 'H', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                6 => {2 => 'H', 3 => 'H', 4 => 'H', 5 => 'H',
+                      6 => 'H', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                7 => {2 => 'H', 3 => 'H', 4 => 'H', 5 => 'H',
+                       6 => 'H', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                8 => {2 => 'H', 3 => 'H', 4 => 'H', 5 => 'Dh',
+                      6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                9 => {2 => 'Dh', 3 => 'Dh', 4 => 'Dh', 5 => 'Dh',
+                      6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                10 => {2 => 'Dh', 3 => 'Dh', 4 => 'Dh', 5 => 'Dh',
+                      6 => 'Dh', 7 => 'Dh', 8 => 'Dh', 9 => 'Dh',
+                      10 => 'H', 11 => 'H'},
+
+                11 => {2 => 'Dh', 3 => 'Dh', 4 => 'Dh', 5 => 'Dh',
+                      6 => 'Dh', 7 => 'Dh', 8 => 'Dh', 9 => 'Dh',
+                      10 => 'Dh', 11 => 'Dh'},
+
+                12 => {2 => 'H', 3 => 'H', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                13 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                14 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                15 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                16 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'H', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                17 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                18 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                19 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                20 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                21 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'}}
+
+  hard_hand[hand_value][dealer_card]
+end
+
+def get_soft_hand_code(hand_value, dealer_card)
+  soft_hand = { 13 => {2 => 'H', 3 => 'H', 4 => 'Dh', 5 => 'Dh',
+                       6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                14 => {2 => 'H', 3 => 'H', 4 => 'Dh', 5 => 'Dh',
+                       6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                15 => {2 => 'H', 3 => 'H', 4 => 'Dh', 5 => 'Dh',
+                       6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                16 => {2 => 'H', 3 => 'H', 4 => 'Dh', 5 => 'Dh',
+                       6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                17 => {2 => 'Dh', 3 => 'Dh', 4 => 'Dh', 5 => 'Dh',
+                       6 => 'Dh', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                18 => {2 => 'S', 3 => 'Ds', 4 => 'Ds', 5 => 'Ds',
+                      6 => 'Ds', 7 => 'S', 8 => 'S', 9 => 'H',
+                      10 => 'H', 11 => 'S'},
+
+                19 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'Ds', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                20 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                21 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'}}
+
+  soft_hand[hand_value][dealer_card]
+end
+
+def get_pair_code(hand_value, dealer_card)
+  pair = {    4 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'P', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                6 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'P', 8 => 'P', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                8 => {2 => 'H', 3 => 'H', 4 => 'P', 5 => 'P',
+                       6 => 'P', 7 => 'H', 8 => 'H', 9 => 'H',
+                       10 => 'H', 11 => 'H'},
+
+                10 => {2 => 'Dh', 3 => 'Dh', 4 => 'Dh', 5 => 'Dh',
+                      6 => 'Dh', 7 => 'Dh', 8 => 'Dh', 9 => 'Dh',
+                      10 => 'H', 11 => 'H'},
+
+                12 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'P', 8 => 'H', 9 => 'H',
+                      10 => 'H', 11 => 'H'},
+
+                14 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'P', 8 => 'P', 9 => 'H',
+                      10 => 'S', 11 => 'H'},
+
+                16 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'P', 8 => 'P', 9 => 'P',
+                      10 => 'P', 11 => 'P'},
+
+                18 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'S', 8 => 'P', 9 => 'P',
+                      10 => 'S', 11 => 'S'},
+
+                20 => {2 => 'S', 3 => 'S', 4 => 'S', 5 => 'S',
+                      6 => 'S', 7 => 'S', 8 => 'S', 9 => 'S',
+                      10 => 'S', 11 => 'S'},
+
+                22 => {2 => 'P', 3 => 'P', 4 => 'P', 5 => 'P',
+                      6 => 'P', 7 => 'P', 8 => 'P', 9 => 'P',
+                      10 => 'P', 11 => 'P'}}
+
+  pair[hand_value][dealer_card]
+end
+
+def convert_advice_code(advice_code)
+  case advice_code
+  when 'H'
+    'Hit.'
+  when 'S'
+    'Stand.'
+  when 'P'
+    'Split.'
+  when 'Dh'
+    'Double if possible, otherwise Hit.'
+  when 'Ds'
+    'Double if possible, otherwise Stand.'
   end
 end
 
@@ -164,4 +312,4 @@ dealer_card = find_value(clean_input(dealer_card))
 hand_type = find_hand_type(hand)
 hand_value = find_value(hand)
 
-puts 'You should ' + get_suggestion(hand_type, hand_value, dealer_card).to_s
+puts 'You should ' + get_suggestion(hand_type, hand_value, dealer_card)

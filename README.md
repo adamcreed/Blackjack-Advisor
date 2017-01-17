@@ -7,6 +7,8 @@ Cards should be entered by their numeric or single-letter face value. The progra
 
 ## Release History
 
+* 1.0.0
+    * Completed lookup tables.
 * 0.1.0
     * First functional release, lookup table incomplete.
 * 0.0.1
