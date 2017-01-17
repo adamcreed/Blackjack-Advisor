@@ -1,13 +1,17 @@
 def get_user_hand
   print 'Enter your two cards: '
+
   until is_valid_hand?(hand = gets.chomp, 2); end
   #This seems kinda weird, but I don't actully need the loop to do anything except pass
+
   hand
 end
 
 def get_dealer_card
   print "Enter the dealer's card: "
+
   until is_valid_hand?(dealer_card = gets.chomp, 1); end
+
   dealer_card
 end
 
@@ -23,11 +27,14 @@ end
 def are_cards?(cards)
   is_a_card = true
   previous = ''
+
   cards.split("").each do |card|
     if is_a_card
       is_a_card = card.upcase =~ /[AKQJ1-9 ]/
+
       is_a_card = true if previous == '1' and card == '0'
       is_a_card = false if previous == '1' and not (card == '0')
+
       previous = card
     end
   end
@@ -90,6 +97,7 @@ def find_value(hand)
 
     elsif card == 'A'
       hand_value += 11
+
     else
       hand_value += card.to_i
     end
@@ -271,12 +279,16 @@ def convert_advice_code(advice_code)
   case advice_code
   when 'H'
     'Hit.'
+
   when 'S'
     'Stand.'
+
   when 'P'
     'Split.'
+
   when 'Dh'
     'Double if possible, otherwise Hit.'
+
   when 'Ds'
     'Double if possible, otherwise Stand.'
   end
